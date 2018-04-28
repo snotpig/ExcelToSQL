@@ -1,0 +1,15 @@
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\MainWindow.g.cs
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\App.g.cs
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\MainWindow.baml
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\ExceltoSQL.csproj.GenerateResource.Cache
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\ExceltoSQL.csproj.CoreCompileInputs.cache
+C:\dev\ExceltoSQL\CSVtoSQL\bin\Release\EsceltoSQL.exe.config
+C:\dev\ExceltoSQL\CSVtoSQL\bin\Release\EsceltoSQL.exe
+C:\dev\ExceltoSQL\CSVtoSQL\bin\Release\EsceltoSQL.pdb
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\EsceltoSQL_MarkupCompile.cache
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\EsceltoSQL_MarkupCompile.lref
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\EsceltoSQL.g.resources
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\ExceltoSQL.Properties.Resources.resources
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\EsceltoSQL.exe
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\EsceltoSQL.pdb
+C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\ExceltoSQL.csprojResolveAssemblyReference.cache
