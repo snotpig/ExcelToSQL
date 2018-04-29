@@ -3,35 +3,50 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         xmlns:local="clr-namespace:ExceltoSQL"
         mc:Ignorable="d"
         Title="ExceltoSQL" Height="250" Width="270" ResizeMode="CanResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height" 
         MinWidth="270" MinHeight="62" MaxWidth="500" MaxHeight="1000" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
-    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Grid>
-        <StackPanel Name="DropPanel" Background="Gray" Drop="DropPanel_Drop" AllowDrop="true">
-            <StackPanel >
-                <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" Background="LightBlue" >Open File</Button>
-                <DockPanel Name="PanelWorksheet" Visibility="Collapsed">
-                    <TextBlock Background="LightGoldenrodYellow" Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="  Worksheet "/></TextBlock>
-                    <ComboBox Name="ComboWorksheet"  Background="LightGoldenrodYellow" SelectionChanged="ComboSheet_SelectionChanged"></ComboBox>
-                </DockPanel>
+    <Window.Resources>
+        <cm:BackgroundWorker x:Key="backgroundWorker" 
+        WorkerReportsProgress="False" WorkerSupportsCancellation="False"
+        DoWork="backgroundWorker_DoWork"
+        RunWorkerCompleted="backgroundWorker_RunWorkerCompleted">
+        </cm:BackgroundWorker>
+    </Window.Resources>
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <StackPanel Name="DropPanel" Background="Gray" Drop="DropPanel_Drop" AllowDrop="true">
+                <StackPanel >
+                    <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" Background="LightBlue" >Open File</Button>
+                    <DockPanel Name="PanelWorksheet" Visibility="Collapsed">
+                        <TextBlock Background="LightGoldenrodYellow" Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="  Worksheet "/></TextBlock>
+                        <ComboBox Name="ComboWorksheet"  Background="LightGoldenrodYellow" SelectionChanged="ComboSheet_SelectionChanged"></ComboBox>
+                    </DockPanel>
+                </StackPanel>
+                <Grid>
+                    <DataGrid Name="dgColumns" AutoGenerateColumns="False" Visibility="Collapsed">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Column Name" Binding="{Binding Path=Name}"  MinWidth="50" Width="*"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Data Type" Binding="{Binding Path=Type}" Width="SizeToCells" MinWidth="100"></DataGridTextColumn>
+                            <DataGridCheckBoxColumn Binding="{Binding Path=Include, Mode=TwoWay}" >
+                                <DataGridCheckBoxColumn.HeaderTemplate>
+                                    <DataTemplate x:Name="dtAllChkBx">
+                                        <CheckBox Name="cbAll" Checked="CbAll_Checked" Unchecked="CbAll_Unchecked" HorizontalAlignment="Center" IsChecked="True"/>
+                                    </DataTemplate>
+                                </DataGridCheckBoxColumn.HeaderTemplate>
+                            </DataGridCheckBoxColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <local:ucSpinnerDotCircle x:Name="Spinner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                </Grid>
+                <Button Name="btnSql" Click="BtnSql_Click" Visibility="Collapsed" Background="LightBlue">
+                    <Grid>
+                        <Label Name="lblBtn" HorizontalAlignment="Center">Copy SQL to clipboard</Label>
+                    </Grid>
+                </Button>
             </StackPanel>
-            <DataGrid Grid.Row="1" Name="dgColumns" AutoGenerateColumns="False" Visibility="Collapsed">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Column Name" Binding="{Binding Path=Name}"  MinWidth="50" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Data Type" Binding="{Binding Path=Type}" Width="SizeToCells" MinWidth="100"></DataGridTextColumn>
-                    <DataGridCheckBoxColumn Binding="{Binding Path=Include, Mode=TwoWay}" >
-                        <DataGridCheckBoxColumn.HeaderTemplate>
-                            <DataTemplate x:Name="dtAllChkBx">
-                                <CheckBox Name="cbAll" Checked="CbAll_Checked" Unchecked="CbAll_Unchecked" HorizontalAlignment="Center" IsChecked="True"/>
-                            </DataTemplate>
-                        </DataGridCheckBoxColumn.HeaderTemplate>
-                    </DataGridCheckBoxColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-            <Button Name="btnSql" Click="BtnSql_Click" Visibility="Collapsed" Background="LightBlue">Copy SQL to clipboard</Button>
-        </StackPanel>
-    </Grid>
+        </Grid>
     </ScrollViewer>
 </Window>

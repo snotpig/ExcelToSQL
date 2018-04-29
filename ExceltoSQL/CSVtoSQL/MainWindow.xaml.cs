@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Linq;
+using System.ComponentModel;
 
 namespace ExceltoSQL
 {
@@ -12,12 +13,27 @@ namespace ExceltoSQL
     {
         private SqlBuilder _sqlBuilder;
         private IEnumerable<string> _worksheets;
+        private BackgroundWorker backgroundWorker;
+        private string sql;
 
         public MainWindow()
         {
             InitializeComponent();
-            if(App.Args != null)
+            backgroundWorker = ((BackgroundWorker)this.FindResource("backgroundWorker"));
+            if (App.Args != null)
                 LoadFile(App.Args[0]);
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            sql = _sqlBuilder.GetSql();            
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Spinner.Visibility = Visibility.Collapsed;
+            btnSql.IsEnabled = true;
+            Clipboard.SetText(sql);
         }
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
@@ -87,7 +103,11 @@ namespace ExceltoSQL
         private void BtnSql_Click(object sender, RoutedEventArgs e)
         {
             if (_sqlBuilder.Columns.Any(c => c.Include))
-                Clipboard.SetText(_sqlBuilder.GetSql());
+            {
+                btnSql.IsEnabled = false;
+                Spinner.Visibility = Visibility.Visible;
+                backgroundWorker.RunWorkerAsync();
+            }
             else
                 ShowMessage("You must include at least one column");
         }

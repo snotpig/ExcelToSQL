@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\dev\ExceltoSQL\CSVtoSQL\obj\Release\
+F:\Documents\GitHub\ExcelToSQL\ExceltoSQL\CSVtoSQL\obj\Release\
 ExceltoSQL
 none
 false
 TRACE
-C:\dev\ExceltoSQL\CSVtoSQL\App.xaml
-11151548125
+F:\Documents\GitHub\ExcelToSQL\ExceltoSQL\CSVtoSQL\App.xaml
+21398379065
 
-13817789527
-14-2091964075
-MainWindow.xaml;
+11508451342
+14-1790907092
+MainWindow.xaml;ucSpinnerDotCircle.xaml;
 
-True
+False
 

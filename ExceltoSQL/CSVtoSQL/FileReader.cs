@@ -60,9 +60,10 @@ namespace ExceltoSQL
             {
                 var xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(s);
 
-                var range = (object[,])xlWorkSheet.UsedRange.Value2;
-                var numRows = range.GetLength(0);
-                var numCols = range.GetLength(1);
+                var range = xlWorkSheet.UsedRange.Value;
+
+                var numRows = range?.GetLength(0) ?? 0;
+                var numCols = range?.GetLength(1) ?? 0;
                 List<List<string>> rows = null;
 
                 if (numRows > 0 && numCols > 0)
@@ -73,12 +74,15 @@ namespace ExceltoSQL
                         var row = new List<string> { };
                         for (var j = 1; j <= numCols; j++)
                         {
-                            row.Add(range[i, j]?.ToString()?? "");
+                            var dt = range[i, j] as DateTime?;                            
+                            row.Add(dt == null 
+                                ? range[i, j]?.ToString()?? ""
+                                : dt.Value.ToShortDateString());
                         }
                         rows.Add(row);
                     }
+                    worksheets.Add(new Worksheet { Title = xlWorkSheet.Name, Rows = rows });
                 }
-                worksheets.Add(new Worksheet { Title = xlWorkSheet.Name, Rows = rows });
                 ReleaseObject(xlWorkSheet);
             }
 

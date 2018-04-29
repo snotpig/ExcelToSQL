@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ExceltoSQL
 {
@@ -19,22 +20,29 @@ namespace ExceltoSQL
         }
 
         public void OpenWorksheet(int index)
-        {
+        {           
             var worksheet = _worksheets.ElementAt(index - 1);
             _values = worksheet.Rows.Skip(1);
             Columns = worksheet.Rows.First()
-                .Select((h, i) => new Column(h, _values.All(v => (v.Count() <= i) || int.TryParse(v.ElementAt(i), out var n))
+                .Select((h, i) => new Column(h, _values.All(v => (v.Count() <= i) || Regex.IsMatch(v.ElementAt(i), @"\d{2}/\d{2}/\d{4}"))
+                ? "date"
+                : _values.All(v => (v.Count() <= i) || int.TryParse(v.ElementAt(i), out var n))
                 ? "int"
                 : _values.All(v => (v.Count() <= i) || decimal.TryParse(v.ElementAt(i), out var d))
                 ? $"decimal(12,{_values.Max(v => v.ElementAt(i).Length - Math.Abs(v.ElementAt(i).LastIndexOf('.')) - 1).ToString()})"
-                : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length : 1).ToString()})")).ToList();
+                : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length : 1).ToString()})"))
+                .ToList();
         }
 
         public string GetSql()
         {
             var selectedColumns = Columns.Where(c => c.Include).ToList();
             var selectedValues = _values.Select(l => Columns
-                .Select((c, i) => c.Type.Substring(0, 3) == "nva" ? $"'{((l.Count() > i) ? l.ElementAt(i) : "") }'" : ((l.Count() > i) ? l.ElementAt(i) : "null"))
+                .Select((c, i) => c.Type.Substring(0, 3) == "nva" 
+                    ? $"'{((l.Count() > i) ? l.ElementAt(i) : "") }'" 
+                    : c.Type == "date"
+                    ? $"{((l.Count() > i) ? $"'{l.ElementAt(i).ToSqlDateString()}'" : "null")}"
+                    : ((l.Count() > i) ? l.ElementAt(i) : "null"))
                 .Where((v, i) => Columns.ElementAt(i).Include));
             var sql = new StringBuilder($"IF OBJECT_ID('tempdb..{TableName}') IS NOT NULL DROP TABLE {TableName}\r\nGO\r\n\r\n");
             sql.Append($"CREATE TABLE {TableName} (tblId int,{selectedColumns.Aggregate(new StringBuilder(), (sb, c) => sb.Append($"[{c.Name}] {c.Type},"))}");
