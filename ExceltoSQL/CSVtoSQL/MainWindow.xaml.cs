@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Linq;
 using System.ComponentModel;
+using System.IO;
 
 namespace ExceltoSQL
 {
@@ -59,7 +60,7 @@ namespace ExceltoSQL
             panelTableName.Visibility = Visibility.Collapsed;
             dgColumns.Visibility = Visibility.Collapsed;
             btnSql.Visibility = Visibility.Collapsed;
-            var extension = filePath.Substring(filePath.Length - 4).ToLower();
+            var extension = Path.GetExtension(filePath).ToLower();
             if (!extensions.Contains(extension))
             {
                 ShowMessage($"Can't open {extension} files");
