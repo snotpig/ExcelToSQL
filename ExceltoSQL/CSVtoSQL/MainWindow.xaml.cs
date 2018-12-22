@@ -11,6 +11,7 @@ namespace ExceltoSQL
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly string[] extensions = { ".xlsx", ".xls", ".csv" };
         private SqlBuilder _sqlBuilder;
         private IEnumerable<string> _worksheets;
         private BackgroundWorker backgroundWorker;
@@ -39,7 +40,8 @@ namespace ExceltoSQL
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Excel files (*.xlsx; *.csv)|*.xlsx;*.csv";
+
+            openFileDialog.Filter = $"Excel files (*{string.Join("; *", extensions)})|*{string.Join("; *", extensions)}";
             var result = openFileDialog.ShowDialog();
             if (result.Value)
                 LoadFile(openFileDialog.FileName);
@@ -54,12 +56,13 @@ namespace ExceltoSQL
         private void LoadFile(string filePath)
         {
             PanelWorksheet.Visibility = Visibility.Collapsed;
+            panelTableName.Visibility = Visibility.Collapsed;
             dgColumns.Visibility = Visibility.Collapsed;
             btnSql.Visibility = Visibility.Collapsed;
             var extension = filePath.Substring(filePath.Length - 4).ToLower();
-            if (extension != ".csv" && extension != "xlsx")
+            if (!extensions.Contains(extension))
             {
-                ShowMessage("Can only open .XLSX or .CSV files");
+                ShowMessage($"Can't open {extension} files");
                 return;
             }
 
@@ -80,9 +83,10 @@ namespace ExceltoSQL
             }
             dgColumns.ItemsSource = _sqlBuilder.Columns;
             dgColumns.Visibility = Visibility.Visible;
+            panelTableName.Visibility = Visibility.Visible;
             btnSql.Visibility = Visibility.Visible;
             this.SizeToContent = SizeToContent.Height;
-            this.MaxHeight = 109.5 + _sqlBuilder.Columns.Count() * 19 + (worksheets.Count() > 1? 26 : 0);
+            this.MaxHeight = 147 + _sqlBuilder.Columns.Count() * 19 + (worksheets.Count() > 1? 26 : 0);
         }
 
         public void ShowMessage(string message)
@@ -106,6 +110,7 @@ namespace ExceltoSQL
             {
                 btnSql.IsEnabled = false;
                 Spinner.Visibility = Visibility.Visible;
+                _sqlBuilder.TableName = txtTableName.Text;
                 backgroundWorker.RunWorkerAsync();
             }
             else

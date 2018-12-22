@@ -17,12 +17,16 @@
     </Window.Resources>
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid>
-            <StackPanel Name="DropPanel" Background="Gray" Drop="DropPanel_Drop" AllowDrop="true">
+            <StackPanel Name="DropPanel" Drop="DropPanel_Drop" AllowDrop="true">
                 <StackPanel >
                     <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" Background="LightBlue" >Open File</Button>
-                    <DockPanel Name="PanelWorksheet" Visibility="Collapsed">
-                        <TextBlock Background="LightGoldenrodYellow" Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="  Worksheet "/></TextBlock>
-                        <ComboBox Name="ComboWorksheet"  Background="LightGoldenrodYellow" SelectionChanged="ComboSheet_SelectionChanged"></ComboBox>
+                    <DockPanel Name="PanelWorksheet" Background="LightGoldenrodYellow" Visibility="Collapsed">
+                        <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text=" Worksheet "/></TextBlock>
+                        <ComboBox Name="ComboWorksheet" SelectionChanged="ComboSheet_SelectionChanged" Margin="0,3,5,3"></ComboBox>
+                    </DockPanel>
+                    <DockPanel Name="panelTableName" Background="LightGray" Visibility="Collapsed">
+                        <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="Table Name #"/></TextBlock>
+                        <TextBox Name="txtTableName" Text="table" VerticalAlignment="Center" Margin="0,1,5,1" />
                     </DockPanel>
                 </StackPanel>
                 <Grid>
