@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceltoSQL", "CSVtoSQL\ExceltoSQL.csproj", "{C4B2B0DD-5042-4825-8E8F-28E7F4C024C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceltoSQL", "ExceltoSQL\ExceltoSQL.csproj", "{C4B2B0DD-5042-4825-8E8F-28E7F4C024C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
