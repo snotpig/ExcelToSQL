@@ -21,7 +21,7 @@ namespace ExceltoSQL
         public MainWindow()
         {
             InitializeComponent();
-            backgroundWorker = ((BackgroundWorker)this.FindResource("backgroundWorker"));
+            backgroundWorker = (BackgroundWorker)this.FindResource("backgroundWorker");
             if (App.Args != null)
                 LoadFile(App.Args[0]);
         }
