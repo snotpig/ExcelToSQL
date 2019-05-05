@@ -74,10 +74,10 @@ namespace ExceltoSQL
                         var row = new List<string> { };
                         for (var j = 1; j <= numCols; j++)
                         {
-                            var dt = range[i, j] as DateTime?;                            
-                            row.Add(dt == null 
-                                ? range[i, j]?.ToString()?? ""
-                                : dt.Value.ToShortDateString());
+                            var dt = range[i, j] as DateTime?;
+							row.Add(dt == null
+								? range[i, j]?.ToString() ?? ""
+								: dt.Value.ToShortDateString());
                         }
                         rows.Add(row);
                     }

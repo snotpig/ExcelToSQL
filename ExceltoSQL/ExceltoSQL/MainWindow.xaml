@@ -9,12 +9,13 @@
         Title="ExceltoSQL" Height="250" Width="270" ResizeMode="CanResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height" 
         MinWidth="270" MinHeight="62" MaxWidth="500" MaxHeight="1000" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
     <Window.Resources>
-        <cm:BackgroundWorker x:Key="backgroundWorker" 
-        WorkerReportsProgress="False" WorkerSupportsCancellation="False"
-        DoWork="backgroundWorker_DoWork"
-        RunWorkerCompleted="backgroundWorker_RunWorkerCompleted">
+		<cm:BackgroundWorker x:Key="backgroundWorker" 
+			WorkerReportsProgress="True" ProgressChanged="ProgressChanged"
+			WorkerSupportsCancellation="False"
+			DoWork="backgroundWorker_DoWork"
+			RunWorkerCompleted="backgroundWorker_RunWorkerCompleted">
         </cm:BackgroundWorker>
-    </Window.Resources>
+	</Window.Resources>
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid>
             <StackPanel Name="DropPanel" Drop="DropPanel_Drop" AllowDrop="true">
@@ -50,6 +51,7 @@
                         <Label Name="lblBtn" HorizontalAlignment="Center">Copy SQL to clipboard</Label>
                     </Grid>
                 </Button>
+				<ProgressBar Name="progress" Height="25" Foreground="#FF4444FF" Visibility="Collapsed"></ProgressBar>
             </StackPanel>
         </Grid>
     </ScrollViewer>
