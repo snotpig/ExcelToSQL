@@ -4,11 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace ExceltoSQL
 {
-    class SqlBuilder
+	class SqlBuilder
     {
         private readonly IEnumerable<Worksheet> _worksheets;
         private IEnumerable<IEnumerable<string>> _values;
