@@ -36,7 +36,7 @@ namespace ExceltoSQL
                 .Split(new[] { ',' })
                 .Select(s => s.Replace((char)176, ',').Replace("\'", "\'\'"))).ToList();
 
-            return new List<Worksheet> { new Worksheet { Rows = rows } };
+            return new List<Worksheet> { new Worksheet { Rows = TrimEmpty(rows) } };
         }
 
         private static IEnumerable<Worksheet> ReadXlsxFile(string filePath)
@@ -81,7 +81,7 @@ namespace ExceltoSQL
                         }
                         rows.Add(row);
                     }
-                    worksheets.Add(new Worksheet { Title = xlWorkSheet.Name, Rows = rows });
+                    worksheets.Add(new Worksheet { Title = xlWorkSheet.Name, Rows = TrimEmpty(rows) });
                 }
                 ReleaseObject(xlWorkSheet);
             }
@@ -111,5 +111,10 @@ namespace ExceltoSQL
                 GC.Collect();
             }
         }
+
+		private static List<IEnumerable<string>> TrimEmpty(IEnumerable<IEnumerable<string>> rows)
+		{
+			return rows.Where(r => r.All(v => !string.IsNullOrEmpty(v))).ToList();
+		}
     }
 }

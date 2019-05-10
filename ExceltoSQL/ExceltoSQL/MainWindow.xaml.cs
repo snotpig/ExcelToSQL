@@ -19,12 +19,16 @@ namespace ExceltoSQL
 		private string _filePath;
         private IEnumerable<Worksheet> _worksheets;
         private BackgroundWorker _backgroundWorker;
+		private DispatcherTimer _timer;
 		private string _sql;
 
         public MainWindow()
         {
             InitializeComponent();
 			_backgroundWorker = (BackgroundWorker)FindResource("backgroundWorker");
+			_timer = (DispatcherTimer)FindResource("timer");
+			_timer.Interval = TimeSpan.FromSeconds(0.3);
+
 			if (App.Args != null)
 			{
 				_filePath = App.Args[0];
@@ -148,11 +152,7 @@ namespace ExceltoSQL
 			if (e.Result as string == "sql")
 			{
 				Clipboard.SetText(_sql);
-				SizeToContent = SizeToContent.Manual;
-				progress.Visibility = Visibility.Collapsed;
-				btnSql.Visibility = Visibility.Visible;
-				SizeToContent = SizeToContent.Height;
-				btnSql.IsEnabled = true;
+				_timer.Start();
 			}
 			else
 			{
@@ -161,9 +161,18 @@ namespace ExceltoSQL
 			}
 		}
 
-		private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void progressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			progress.Value = e.ProgressPercentage;
+		}
+
+		private void timer_Tick(object sender, EventArgs e)
+		{
+			SizeToContent = SizeToContent.Manual;
+			progress.Visibility = Visibility.Collapsed;
+			btnSql.Visibility = Visibility.Visible;
+			SizeToContent = SizeToContent.Height;
+			btnSql.IsEnabled = true;
 		}
 	}
 }
