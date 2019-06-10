@@ -24,7 +24,7 @@
         <Grid>
             <StackPanel Name="DropPanel" Drop="DropPanel_Drop" AllowDrop="true">
                 <StackPanel >
-                    <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" Background="LightBlue" >Open File</Button>
+                    <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" MouseRightButtonUp="BtnOpen_MouseRightButtonUp"  Background="LightBlue" >Open File</Button>
                     <DockPanel Name="PanelWorksheet" Background="LightGoldenrodYellow" Visibility="Collapsed">
                         <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text=" Worksheet "/></TextBlock>
                         <ComboBox Name="ComboWorksheet" SelectionChanged="ComboSheet_SelectionChanged" Margin="0,3,5,3"></ComboBox>

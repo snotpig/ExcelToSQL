@@ -52,11 +52,34 @@ namespace ExceltoSQL
         private void DropPanel_Drop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-			_filePath = files[0];
-            LoadFile();     
+			if (files != null)
+			{
+				_filePath = files[0];
+				LoadFile();
+			}
         }
 
-        private void LoadFile()
+		private void BtnOpen_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var text = Clipboard.GetText();
+			if (string.IsNullOrEmpty(text))
+				return;
+
+			var lines = text.Replace("\r", "").Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			if(_extensions.Contains(Path.GetExtension(lines[0])))
+			{
+				_filePath = lines[0];
+			}
+			_worksheets = new List<Worksheet> { new Worksheet { Rows = GetRows(new List<string>{ "value" }.Concat(lines)) } };
+			populateGrid();
+		}
+
+		private IEnumerable<IEnumerable<string>> GetRows(IEnumerable<string> lines)
+		{
+			return lines.Select(s => new List<string> { s });
+		}
+
+		private void LoadFile()
         {
             PanelWorksheet.Visibility = Visibility.Collapsed;
             panelTableName.Visibility = Visibility.Collapsed;
