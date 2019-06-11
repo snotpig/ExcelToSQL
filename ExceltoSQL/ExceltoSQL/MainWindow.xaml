@@ -4,23 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
+        xmlns:th="clr-namespace:System.Windows.Threading;assembly=WindowsBase"
         xmlns:local="clr-namespace:ExceltoSQL"
         mc:Ignorable="d"
         Title="ExceltoSQL" Height="250" Width="270" ResizeMode="CanResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height" 
         MinWidth="270" MinHeight="62" MaxWidth="500" MaxHeight="1000" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
     <Window.Resources>
 		<cm:BackgroundWorker x:Key="backgroundWorker" 
-			WorkerReportsProgress="True" ProgressChanged="ProgressChanged"
+			WorkerReportsProgress="True" ProgressChanged="progressChanged"
 			WorkerSupportsCancellation="False"
 			DoWork="backgroundWorker_DoWork"
 			RunWorkerCompleted="backgroundWorker_RunWorkerCompleted">
         </cm:BackgroundWorker>
+		<th:DispatcherTimer x:Key="timer"
+			Tick="timer_Tick">
+		</th:DispatcherTimer>
 	</Window.Resources>
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid>
             <StackPanel Name="DropPanel" Drop="DropPanel_Drop" AllowDrop="true">
                 <StackPanel >
-                    <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" Background="LightBlue" >Open File</Button>
+                    <Button Name="btnOpen"  FontSize="16" Click="BtnOpen_Click" MouseRightButtonUp="BtnOpen_MouseRightButtonUp"  Background="LightBlue" >Open File</Button>
                     <DockPanel Name="PanelWorksheet" Background="LightGoldenrodYellow" Visibility="Collapsed">
                         <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text=" Worksheet "/></TextBlock>
                         <ComboBox Name="ComboWorksheet" SelectionChanged="ComboSheet_SelectionChanged" Margin="0,3,5,3"></ComboBox>
@@ -51,7 +55,7 @@
                         <Label Name="lblBtn" HorizontalAlignment="Center">Copy SQL to clipboard</Label>
                     </Grid>
                 </Button>
-				<ProgressBar Name="progress" Height="25" Foreground="#FF4444FF" Visibility="Collapsed"></ProgressBar>
+				<ProgressBar Name="progress" Height="30" Foreground="#FF5566FF" Visibility="Collapsed"></ProgressBar>
             </StackPanel>
         </Grid>
     </ScrollViewer>

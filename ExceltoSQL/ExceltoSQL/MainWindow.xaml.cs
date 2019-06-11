@@ -19,12 +19,16 @@ namespace ExceltoSQL
 		private string _filePath;
         private IEnumerable<Worksheet> _worksheets;
         private BackgroundWorker _backgroundWorker;
+		private DispatcherTimer _timer;
 		private string _sql;
 
         public MainWindow()
         {
             InitializeComponent();
 			_backgroundWorker = (BackgroundWorker)FindResource("backgroundWorker");
+			_timer = (DispatcherTimer)FindResource("timer");
+			_timer.Interval = TimeSpan.FromSeconds(0.3);
+
 			if (App.Args != null)
 			{
 				_filePath = App.Args[0];
@@ -48,11 +52,34 @@ namespace ExceltoSQL
         private void DropPanel_Drop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-			_filePath = files[0];
-            LoadFile();     
+			if (files != null)
+			{
+				_filePath = files[0];
+				LoadFile();
+			}
         }
 
-        private void LoadFile()
+		private void BtnOpen_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var text = Clipboard.GetText();
+			if (string.IsNullOrEmpty(text))
+				return;
+
+			var lines = text.Replace("\r", "").Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			if(_extensions.Contains(Path.GetExtension(lines[0])))
+			{
+				_filePath = lines[0];
+			}
+			_worksheets = new List<Worksheet> { new Worksheet { Rows = GetRows(new List<string>{ "value" }.Concat(lines)) } };
+			populateGrid();
+		}
+
+		private IEnumerable<IEnumerable<string>> GetRows(IEnumerable<string> lines)
+		{
+			return lines.Select(s => new List<string> { s });
+		}
+
+		private void LoadFile()
         {
             PanelWorksheet.Visibility = Visibility.Collapsed;
             panelTableName.Visibility = Visibility.Collapsed;
@@ -148,11 +175,7 @@ namespace ExceltoSQL
 			if (e.Result as string == "sql")
 			{
 				Clipboard.SetText(_sql);
-				SizeToContent = SizeToContent.Manual;
-				progress.Visibility = Visibility.Collapsed;
-				btnSql.Visibility = Visibility.Visible;
-				SizeToContent = SizeToContent.Height;
-				btnSql.IsEnabled = true;
+				_timer.Start();
 			}
 			else
 			{
@@ -161,9 +184,18 @@ namespace ExceltoSQL
 			}
 		}
 
-		private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void progressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			progress.Value = e.ProgressPercentage;
+		}
+
+		private void timer_Tick(object sender, EventArgs e)
+		{
+			SizeToContent = SizeToContent.Manual;
+			progress.Visibility = Visibility.Collapsed;
+			btnSql.Visibility = Visibility.Visible;
+			SizeToContent = SizeToContent.Height;
+			btnSql.IsEnabled = true;
 		}
 	}
 }

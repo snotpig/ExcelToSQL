@@ -4,11 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace ExceltoSQL
 {
-    class SqlBuilder
+	class SqlBuilder
     {
         private readonly IEnumerable<Worksheet> _worksheets;
         private IEnumerable<IEnumerable<string>> _values;
@@ -67,7 +66,7 @@ namespace ExceltoSQL
             sql.Append($"DECLARE @MaxId int = {_values.Count()};\r\nDECLARE @CurrentId int = 1;\r\n\r\nWHILE @CurrentId <= @MaxId\r\nBEGIN\r\n\tSELECT TOP 1");
             sql.Append($"{selectedColumns.Aggregate(new StringBuilder(), (sb, c) => sb.Append($"\r\n\t@{c.Name.Replace(' ', '_').Replace('/', '_')} = [{c.Name}],"))}");
             sql.Length--;
-            sql.Append($"\tFROM #{TableName}\r\n\tWHERE tblId = @CurrentId\r\n\r\n\t--insert logic here...\r\n\r\n\tSELECT @CurrentId = @CurrentId + 1\r\nEND");
+            sql.Append($"\r\n\tFROM #{TableName}\r\n\tWHERE tblId = @CurrentId\r\n\r\n\t--insert logic here...\r\n\r\n\tSELECT @CurrentId = @CurrentId + 1\r\nEND");
 			worker.ReportProgress(100);
 			return sql.ToString();
         }
