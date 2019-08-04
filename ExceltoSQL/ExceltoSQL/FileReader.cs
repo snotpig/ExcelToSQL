@@ -114,7 +114,7 @@ namespace ExceltoSQL
 
 		private static List<IEnumerable<string>> TrimEmpty(IEnumerable<IEnumerable<string>> rows)
 		{
-			return rows.Where(r => r.All(v => !string.IsNullOrEmpty(v))).ToList();
+			return rows.Where(r => !r.All(v => string.IsNullOrEmpty(v))).ToList();
 		}
     }
 }

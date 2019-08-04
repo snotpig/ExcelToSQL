@@ -31,7 +31,7 @@ namespace ExceltoSQL
                 ? "int"
                 : _values.All(v => (v.Count() <= i) || decimal.TryParse(v.ElementAt(i), out var d))
                 ? $"decimal(12,{_values.Max(v => v.ElementAt(i).Length - Math.Abs(v.ElementAt(i).LastIndexOf('.')) - 1).ToString()})"
-                : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length : 1).ToString()})"))
+                : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length > 1 ? v.ElementAt(i).Length : 1 : 1).ToString()})"))
                 .ToList();
         }
 
