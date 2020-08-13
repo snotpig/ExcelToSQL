@@ -35,10 +35,14 @@ namespace ExceltoSQL
                 .ToList();
         }
 
-        public string GetSql(BackgroundWorker worker)
+        public string GetSql(BackgroundWorker worker, bool useUnderscores)
         {
 			var values = _values.ToList();
             var selectedColumns = Columns.Where(c => c.Include).ToList();
+            if (useUnderscores)
+                foreach (var col in selectedColumns)
+                    col.Name = col.Name.Replace(' ', '_');
+
             var selectedValues = values.Select((l, i) =>
 			{
 				worker.ReportProgress(100 * i / values.Count);

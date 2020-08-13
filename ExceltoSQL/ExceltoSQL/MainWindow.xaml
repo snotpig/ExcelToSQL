@@ -33,6 +33,9 @@
                         <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="Table Name #"/></TextBlock>
                         <TextBox Name="txtTableName" Text="table" VerticalAlignment="Center" Margin="0,1,5,1" />
                     </DockPanel>
+					<DockPanel Name="panelUnderscore" Background="LightGray" Visibility="Collapsed">
+						<CheckBox Name="cbUnderscore" IsChecked="True" Margin="5">Use underscores in column names</CheckBox>
+                    </DockPanel>
                 </StackPanel>
                 <Grid>
                     <DataGrid Name="dgColumns" AutoGenerateColumns="False" Visibility="Collapsed">

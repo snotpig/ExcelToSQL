@@ -92,7 +92,7 @@ namespace ExceltoSQL
                 return;
             }
 			Spinner.Visibility = Visibility.Visible;
-			_backgroundWorker.RunWorkerAsync("file");
+			_backgroundWorker.RunWorkerAsync(new [] { "file" });
         }
 
 		private void populateGrid()
@@ -114,8 +114,9 @@ namespace ExceltoSQL
 			dgColumns.Visibility = Visibility.Visible;
 			panelTableName.Visibility = Visibility.Visible;
 			btnSql.Visibility = Visibility.Visible;
+			panelUnderscore.Visibility = Visibility.Visible;
 			SizeToContent = SizeToContent.Height;
-			MaxHeight = 147 + _sqlBuilder.Columns.Count() * 19 + (_worksheets.Count() > 1 ? 26 : 0);
+			MaxHeight = 171 + _sqlBuilder.Columns.Count() * 19 + (_worksheets.Count() > 1 ? 26 : 0);
 		}
 
 		public void ShowMessage(string message)
@@ -150,7 +151,7 @@ namespace ExceltoSQL
 				progress.Visibility = Visibility.Visible;
 				SizeToContent = SizeToContent.Height;
 				_sqlBuilder.TableName = txtTableName.Text;
-                _backgroundWorker.RunWorkerAsync("sql");
+                _backgroundWorker.RunWorkerAsync(new [] { "sql", $"{cbUnderscore.IsChecked.Value}"});
             }
             else
                 ShowMessage("You must include at least one column");
@@ -158,9 +159,11 @@ namespace ExceltoSQL
 
 		private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
-			if (e.Argument as string == "sql")
+			var args = e.Argument as string[];
+
+			if (args[0] == "sql")
 			{
-				_sql = _sqlBuilder.GetSql(sender as BackgroundWorker);
+				_sql = _sqlBuilder.GetSql(sender as BackgroundWorker, args[1] == "True");
 				e.Result = "sql";
 			}
 			else
