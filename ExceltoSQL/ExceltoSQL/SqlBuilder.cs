@@ -25,8 +25,8 @@ namespace ExceltoSQL
             var worksheet = _worksheets.ElementAt(index - 1);
             _values = worksheet.Rows.Skip(1);
             Columns = worksheet.Rows.First()
-                .Select((h, i) => new Column(h, _values.All(v => (v.Count() <= i) || Regex.IsMatch(v.ElementAt(i), @"^\d{2}/\d{2}/\d{4}$"))
-                ? "date"
+                .Select((h, i) => new Column(h, _values.All(v => (v.Count() <= i) || Regex.IsMatch(v.ElementAt(i), @"^\d{2}/\d{2}/\d{4}"))
+                ? "datetime"
                 : _values.All(v => (v.Count() <= i) || int.TryParse(v.ElementAt(i), out var n))
                 ? "int"
                 : _values.All(v => (v.Count() <= i) || decimal.TryParse(v.ElementAt(i), out var d))
@@ -48,8 +48,8 @@ namespace ExceltoSQL
 				worker.ReportProgress(100 * i / values.Count);
 				return Columns.Select((c, j) => c.Type.Substring(0, 3) == "nva"
 					? $"'{((l.Count() > j) ? l.ElementAt(j).Replace("'", "''") : "") }'"
-					: c.Type == "date"
-					? $"{((l.Count() > j) ? $"'{l.ElementAt(j).ToSqlDateString()}'" : "null")}"
+					: c.Type == "datetime"
+					? $"{((l.Count() > j) ? $"'{l.ElementAt(j).ToSqlDatetimeString()}'" : "null")}"
 					: ((l.Count() > j) ? l.ElementAt(j) : "null"))
 					.Where((v, j) => Columns.ElementAt(j).Include);
 			}).ToList();

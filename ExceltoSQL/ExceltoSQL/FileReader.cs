@@ -14,9 +14,18 @@ namespace ExceltoSQL
         public static IEnumerable<Worksheet> ReadFile(string filePath, MessageDelegate msgDelegate)
         {
             _showMessage = msgDelegate;
-            if (filePath.Substring(filePath.Length - 4).ToLower() == ".csv")
-                return ReadCsvFile(filePath);
-            return ReadXlsxFile(filePath);
+            var worksheets = filePath.Substring(filePath.Length - 4).ToLower() == ".csv"
+                ? ReadCsvFile(filePath)
+                : ReadXlsxFile(filePath);
+
+            foreach(var worksheet in worksheets)
+            {
+                var numCols = worksheet.Rows.First().ToList().IndexOf(null);
+                if(numCols >= 0)
+                    worksheet.Rows = worksheet.Rows.Select(r => r.Where((c, i) => i < numCols));
+            }
+
+            return worksheets;
         }
 
         private static IEnumerable<Worksheet> ReadCsvFile(string filePath)
@@ -59,11 +68,11 @@ namespace ExceltoSQL
             for (var s = 1; s <= numSheets; s++)
             {
                 var xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(s);
+                var range = xlWorkSheet.UsedRange;
+                var cells = range.Value;
 
-                var range = xlWorkSheet.UsedRange.Value;
-
-                var numRows = range?.GetLength(0) ?? 0;
-                var numCols = range?.GetLength(1) ?? 0;
+                var numRows = cells?.GetLength(0) ?? 0;
+                var numCols = cells?.GetLength(1) ?? 0;
                 List<List<string>> rows = null;
 
                 if (numRows > 0 && numCols > 0)
@@ -74,10 +83,10 @@ namespace ExceltoSQL
                         var row = new List<string> { };
                         for (var j = 1; j <= numCols; j++)
                         {
-                            var dt = range[i, j] as DateTime?;
+                            var dt = cells[i, j] as DateTime?;
 							row.Add(dt == null
-								? range[i, j]?.ToString() ?? ""
-								: dt.Value.ToShortDateString());
+								? cells[i, j]?.ToString()
+								: dt.Value.ToString("dd/MM/yyyy HH:mm:ss"));
                         }
                         rows.Add(row);
                     }

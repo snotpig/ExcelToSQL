@@ -118,4 +118,5 @@
 		<Ellipse x:Name="ellipse10" Fill="Black" Height="4" Width="4" Canvas.Top="20" Canvas.Left="10" Opacity="0"/>
 		<Ellipse x:Name="ellipse11" Fill="Black" Height="4" Width="4" Canvas.Top="18.66025" Canvas.Left="5" Opacity="0"/>
 		<Ellipse x:Name="ellipse12" Fill="Black" Height="4" Width="4" Canvas.Top="15" Canvas.Left="1.4" Opacity="0"/>
-	</Canvas></UserControl>
+	</Canvas>
+</UserControl>

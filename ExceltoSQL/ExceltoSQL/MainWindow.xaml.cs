@@ -183,7 +183,11 @@ namespace ExceltoSQL
 			else
 			{
 				Spinner.Visibility = Visibility.Collapsed;
-				populateGrid();
+				if (!_worksheets.Any())
+					ShowMessage("No worksheets found.");
+
+				else
+					populateGrid();
 			}
 		}
 
