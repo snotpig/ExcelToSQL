@@ -71,7 +71,7 @@ namespace ExceltoSQL
 				_filePath = lines[0];
 			}
 			_worksheets = new List<Worksheet> { new Worksheet { Rows = GetRows(new List<string>{ "value" }.Concat(lines)) } };
-			populateGrid();
+			PopulateGrid();
 		}
 
 		private IEnumerable<IEnumerable<string>> GetRows(IEnumerable<string> lines)
@@ -95,14 +95,21 @@ namespace ExceltoSQL
 			_backgroundWorker.RunWorkerAsync(new [] { "file" });
         }
 
-		private void populateGrid()
+		private void UpdateUi()
 		{
 			if (_worksheets == null)
 			{
 				ShowMessage($"Can't open {_filePath}");
 				return;
 			}
-			_sqlBuilder = new SqlBuilder(_worksheets);
+			UpdateWorksheetDropdown();
+			PopulateGrid();
+			btnSql.Visibility = Visibility.Visible;
+			Resize();
+		}
+
+		private void UpdateWorksheetDropdown()
+		{
 			if (_worksheets.Count() > 1)
 			{
 				var worksheetNames = _worksheets.Select((w, i) => $" {i + 1}   {w.Title}");
@@ -110,21 +117,29 @@ namespace ExceltoSQL
 				ComboWorksheet.SelectedItem = worksheetNames.First();
 				PanelWorksheet.Visibility = Visibility.Visible;
 			}
+		}
+
+		private void PopulateGrid()
+		{
+			var worksheetIndex = _worksheets.Count() > 1 ? ComboWorksheet.SelectedIndex : 0;
+			_sqlBuilder = new SqlBuilder(_worksheets);
+			_sqlBuilder.OpenWorksheet(worksheetIndex, cbUnderscore.IsChecked ?? false, cbIgnoreEmpty.IsChecked ?? false);
 			dgColumns.ItemsSource = _sqlBuilder.Columns;
 			dgColumns.Visibility = Visibility.Visible;
 			panelTableName.Visibility = Visibility.Visible;
-			btnSql.Visibility = Visibility.Visible;
-			panelUnderscore.Visibility = Visibility.Visible;
-			SizeToContent = SizeToContent.Height;
-			MaxHeight = 171 + _sqlBuilder.Columns.Count() * 19 + (_worksheets.Count() > 1 ? 26 : 0);
+			panelOptions.Visibility = Visibility.Visible;
 		}
 
 		public void ShowMessage(string message)
-        {
-            MessageBox.Show(message, "Error!");
-        }
+			=> MessageBox.Show(message, "Error!");
 
-        private void CbAll_Checked(object sender, RoutedEventArgs e)
+		private void Resize()
+		{
+			SizeToContent = SizeToContent.Height;
+			MaxHeight = 194 + _sqlBuilder.Columns.Count() * 19 + (_worksheets.Count() > 1 ? 26 : 0);
+		}
+
+		private void CbAll_Checked(object sender, RoutedEventArgs e)
         {
             _sqlBuilder.Columns.ForEach(c => c.Include = true);
         }
@@ -136,8 +151,8 @@ namespace ExceltoSQL
 
         private void ComboSheet_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            _sqlBuilder.OpenWorksheet(ComboWorksheet.SelectedIndex + 1);
-            dgColumns.ItemsSource = _sqlBuilder.Columns;
+			PopulateGrid();
+			Resize();
         }
 
         private void BtnSql_Click(object sender, RoutedEventArgs e)
@@ -187,7 +202,7 @@ namespace ExceltoSQL
 					ShowMessage("No worksheets found.");
 
 				else
-					populateGrid();
+					UpdateUi();
 			}
 		}
 
@@ -203,6 +218,21 @@ namespace ExceltoSQL
 			btnSql.Visibility = Visibility.Visible;
 			SizeToContent = SizeToContent.Height;
 			btnSql.IsEnabled = true;
+		}
+
+		private void CbUnderscore_Click(object sender, RoutedEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(_filePath))
+				PopulateGrid();
+		}
+
+		private void CbIgnoreEmpty_Click(object sender, RoutedEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(_filePath))
+			{
+				PopulateGrid();
+				Resize();
+			}
 		}
 	}
 }

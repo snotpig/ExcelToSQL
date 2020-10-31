@@ -17,40 +17,36 @@ namespace ExceltoSQL
         public SqlBuilder(IEnumerable<Worksheet> worksheets)
         {
             _worksheets = worksheets;
-            OpenWorksheet(1);
         }
 
-        public void OpenWorksheet(int index)
+        public void OpenWorksheet(int index, bool useUnderscores, bool ignoreEmptyHeaders)
         {           
-            var worksheet = _worksheets.ElementAt(index - 1);
+            var worksheet = _worksheets.ElementAt(index);
             _values = worksheet.Rows.Skip(1);
             Columns = worksheet.Rows.First()
-                .Select((h, i) => new Column(h, _values.All(v => (v.Count() <= i) || Regex.IsMatch(v.ElementAt(i), @"^\d{2}/\d{2}/\d{4}"))
-                ? "datetime"
-                : _values.All(v => (v.Count() <= i) || int.TryParse(v.ElementAt(i), out var n))
-                ? "int"
-                : _values.All(v => (v.Count() <= i) || decimal.TryParse(v.ElementAt(i), out var d))
-                ? $"decimal(12,{_values.Max(v => v.ElementAt(i).Length - Math.Abs(v.ElementAt(i).LastIndexOf('.')) - 1).ToString()})"
-                : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length > 1 ? v.ElementAt(i).Length : 1 : 1).ToString()})"))
-                .ToList();
+                .Select((h, i) => new Column(useUnderscores ? h.Replace(' ', '_') : h, _values.All(v => (v.Count() <= i) || Regex.IsMatch(v.ElementAt(i), @"^\d{2}/\d{2}/\d{4}"))
+                    ? "datetime"
+                    : _values.All(v => (v.Count() <= i) || int.TryParse(v.ElementAt(i), out var n))
+                        ? "int"
+                        : _values.All(v => (v.Count() <= i) || decimal.TryParse(v.ElementAt(i), out var d))
+                            ? $"decimal(12,{_values.Max(v => v.ElementAt(i).Length - Math.Abs(v.ElementAt(i).LastIndexOf('.')) - 1).ToString()})"
+                            : $"nvarchar({_values.Max(v => (v.Count() > i) ? v.ElementAt(i).Length > 1 ? v.ElementAt(i).Length : 1 : 1).ToString()})", i))
+                .Where(c => !ignoreEmptyHeaders || !string.IsNullOrEmpty(c.Name)).ToList();
         }
 
         public string GetSql(BackgroundWorker worker, bool useUnderscores)
         {
 			var values = _values.ToList();
             var selectedColumns = Columns.Where(c => c.Include).ToList();
-            if (useUnderscores)
-                foreach (var col in selectedColumns)
-                    col.Name = col.Name.Replace(' ', '_');
 
             var selectedValues = values.Select((l, i) =>
 			{
 				worker.ReportProgress(100 * i / values.Count);
 				return Columns.Select((c, j) => c.Type.Substring(0, 3) == "nva"
-					? $"'{((l.Count() > j) ? l.ElementAt(j).Replace("'", "''") : "") }'"
+					? $"'{((l.Count() > j) ? l.ElementAt(c.Index).Replace("'", "''") : "") }'"
 					: c.Type == "datetime"
-					? $"{((l.Count() > j) ? $"'{l.ElementAt(j).ToSqlDatetimeString()}'" : "null")}"
-					: ((l.Count() > j) ? l.ElementAt(j) : "null"))
+					    ? $"{((l.Count() > j) ? $"'{l.ElementAt(c.Index).ToSqlDatetimeString()}'" : "null")}"
+					    : ((l.Count() > j) ? l.ElementAt(c.Index) : "null"))
 					.Where((v, j) => Columns.ElementAt(j).Include);
 			}).ToList();
             var sql = new StringBuilder($"IF OBJECT_ID('tempdb..#{TableName}') IS NOT NULL DROP TABLE #{TableName}\r\nGO\r\n\r\n");

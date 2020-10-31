@@ -7,7 +7,7 @@
         xmlns:th="clr-namespace:System.Windows.Threading;assembly=WindowsBase"
         xmlns:local="clr-namespace:ExceltoSQL"
         mc:Ignorable="d"
-        Title="ExceltoSQL" Height="250" Width="270" ResizeMode="CanResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height" 
+        Title="ExceltoSQL" Height="250" Width="300" ResizeMode="CanResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height" 
         MinWidth="270" MinHeight="62" MaxWidth="500" MaxHeight="1000" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
     <Window.Resources>
 		<cm:BackgroundWorker x:Key="backgroundWorker" 
@@ -33,9 +33,10 @@
                         <TextBlock Padding="5" DockPanel.Dock="Left" Width="80"><Run Text="Table Name #"/></TextBlock>
                         <TextBox Name="txtTableName" Text="table" VerticalAlignment="Center" Margin="0,1,5,1" />
                     </DockPanel>
-					<DockPanel Name="panelUnderscore" Background="LightGray" Visibility="Collapsed">
-						<CheckBox Name="cbUnderscore" IsChecked="True" Margin="5">Use underscores in column names</CheckBox>
-                    </DockPanel>
+					<StackPanel Name="panelOptions" Background="LightGray" Visibility="Collapsed">
+						<CheckBox Name="cbUnderscore" IsChecked="True" Margin="5" Click="CbUnderscore_Click">Use underscores in column names</CheckBox>
+						<CheckBox Name="cbIgnoreEmpty" IsChecked="True" Margin="5" Click="CbIgnoreEmpty_Click">Ignore empty headers</CheckBox>
+					</StackPanel>
                 </StackPanel>
                 <Grid>
                     <DataGrid Name="dgColumns" AutoGenerateColumns="False" Visibility="Collapsed">
