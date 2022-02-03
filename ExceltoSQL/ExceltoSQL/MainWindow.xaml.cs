@@ -72,6 +72,8 @@ namespace ExceltoSQL
 			}
 			_worksheets = new List<Worksheet> { new Worksheet { Rows = GetRows(new List<string>{ "value" }.Concat(lines)) } };
 			PopulateGrid();
+			btnSql.Visibility = Visibility.Visible;
+			Resize();
 		}
 
 		private IEnumerable<IEnumerable<string>> GetRows(IEnumerable<string> lines)
